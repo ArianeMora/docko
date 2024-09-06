@@ -1,0 +1,16 @@
+scikit-learn
+sciutil
+seaborn
+sciviso
+h5py
+statsmodels
+biopython
+jupyterlab
+primer3-py
+opencv-python
+pandas
+pysam
+numpy
+rdkit
+OpenMM
+tqdm
