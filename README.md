@@ -65,6 +65,6 @@ micromamba install -c "dglteam/label/cu121" dgl
 micromamba install -c pyg pyg pytorch-cluster pytorch-sparse pytorch-scatter
 pip install git+https://github.com/martinez-zacharya/lightdock.git@03a8bc4888c0ff8c98b7f0df4b3c671e3dbf3b1f git+https://github.com/martinez-zacharya/ECPICK.git setuptools==69.5.1
 pip install trill-proteins
-
 ```
+
 ### Everythin
