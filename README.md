@@ -6,20 +6,16 @@ Made this for myself but others wanted to use. Love only pls. Take it as it is <
 ## Install
 Make sure you have vina installed: https://autodock-vina.readthedocs.io/en/latest/installation.html
 
+I have not found it to work with pip needs the executable.
+
 ```
-conda  create --name docko python=3.10
+conda  create --name docko python=3.10 -y
 conda activate docko
-conda install -c conda-forge pdbfixer
-conda install -c conda-forge numpy swig boost-cpp sphinx sphinx_rtd_theme
-pip install vina
+pip install -r requirements.txt
+conda install -c conda-forge pdbfixer -y
+conda install -c conda-forge numpy swig boost-cpp sphinx sphinx_rtd_theme -y
 conda config --env --add channels conda-forge
 pip install git+https://github.com/chaidiscovery/chai-lab.git
-pip install chai_lab==0.0.1
-```
-
-g else is just pip
-```
-pip install -r requirements.txt
 ```
 
 ## PDB or structure

@@ -25,7 +25,6 @@ cachetools==5.5.0
 certifi==2024.8.30
 cffi==1.17.0
 cfgv==3.4.0
-chai_lab==0.0.1
 charset-normalizer==3.3.2
 click==8.1.7
 comm==0.2.2

@@ -26,8 +26,8 @@ from docko.helpers import *
 def dock_diffdock(output_dir: str, ligand_sdf, pdb_file: str):
     """ Dock using diffdock. """
     os.chdir(output_dir)
-    print(f'conda run -n TRILL python3 trill example 1 dock DiffDock {pdb_file} {ligand_sdf}')
-    os.system(f'conda run -n TRILL python3 trill example 1 dock DiffDock {pdb_file} {ligand_sdf}')
+    print(f'conda run -n TRILL trill example 1 dock DiffDock {pdb_file} {ligand_sdf}')
+    os.system(f'conda run -n TRILL trill example 1 dock DiffDock {pdb_file} {ligand_sdf}')
     # Also now need to move and rename it
 
 

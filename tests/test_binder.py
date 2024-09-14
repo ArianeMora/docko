@@ -89,8 +89,8 @@ class TestBinder(unittest.TestCase):
         #pdb_to_pdbqt_protein(f'{base_dir}data/{label}{label}.pdb', f'{base_dir}data/{label}/{label}.pdbqt')
 
         score = dock(sequence='', protein_name=label, smiles=smiles, ligand_name='dehp', residues=[86, 89], 
-                          protein_dir=f'{base_dir}data/', ligand_dir=f'{base_dir}data/', output_dir=f'{base_dir}data/',
-                            pH=7.4, method='diffdock')
+                    protein_dir=f'{base_dir}data/', ligand_dir=f'{base_dir}data/', output_dir=f'{base_dir}data/',
+                    pH=7.4, method='diffdock')
         print(score)
 
     def test_chia(self):
