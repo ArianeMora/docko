@@ -59,7 +59,7 @@ setup(name='docko',
       packages=['docko'],
       entry_points={
           'console_scripts': [
-              'levseq = docko.cmd:main'
+              'docko = docko.__main__:main'
           ]
       },
       install_requires=['Bio',
