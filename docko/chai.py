@@ -15,42 +15,13 @@
 #                                                                             #
 ###############################################################################
 
-"""
-Wrapper around binding prediction tools to get the optimal state of a protein for predicting a reaction.
-A discusting mix of hacked together elements <3 true bioinformatics style, I am going to coding hell and
-apologise profusely.
-"""
-from rdkit.Chem.MolStandardize.rdMolStandardize import Uncharger
-import re
-import csv
-from pdbfixer import PDBFixer
-from openmm.app import PDBFile, PDBxFile
-from tqdm import tqdm
-from Bio.PDB import PDBParser, MMCIFParser
-from Bio.PDB import PDBIO, Select, MMCIFIO
-from Bio import PDB
-from multiprocessing.dummy import Pool as ThreadPool
-import pandas as pd
-from rdkit.Chem import AllChem
-import requests
-
-import logging
-import os
-import subprocess
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
-from pathlib import Path
-from Bio import SeqIO
 import os
 import torch
 import pandas as pd
-from rdkit import Chem
-
-
-import argparse
 from chai_lab.chai1 import run_inference
+from docko.helpers import *
 
-from rdkit.Chem import AllChem as Chem
 
 def run_chai(output_dir, filename, entry_column='Entry', seq_column='Sequence', ligand_column='Substrate'):
 

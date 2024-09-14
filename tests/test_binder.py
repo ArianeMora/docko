@@ -3,14 +3,11 @@ import unittest
 import pandas as pd
 from sciutil import *
 import sys
-sys.path.append('/Users/arianemora/Documents/code/docko/')
-
 from docko.docko import *
-from pathlib import Path
 
 u = SciUtil()
 
-base_dir = '/Users/arianemora/Documents/code/docko/tests/'
+base_dir = ''
 
 class TestBinder(unittest.TestCase):
 
@@ -21,6 +18,7 @@ class TestBinder(unittest.TestCase):
     def test_convert_pdb(self):
         """ Test converting a pdb to a pdbqt file. """
         pdb_to_pdbqt_protein(f'{base_dir}data/UYO78372.pdb', f'{base_dir}data/UYO78372_out.pdbqt')
+        assert os.path.isfile(f'{base_dir}data/UYO78372_out.pdbqt') == True
 
     def test_get_coordinates(self):
         """ Tests getting the coordinates of a specific residue from a PDB file. """
@@ -37,19 +35,20 @@ class TestBinder(unittest.TestCase):
         os.system(f'mkdir {base_dir}data/UYO78372/')
         os.system(f'cp {base_dir}data/UYO78372.pdb {base_dir}data/UYO78372/UYO78372.pdb')
         dock(sequence='', protein_name='UYO78372', smiles=smiles, ligand_name='dehp', residues=[113], 
-                          protein_dir=f'{base_dir}data/', ligand_dir=f'{base_dir}data/', output_dir=f'{base_dir}data/', pH=7.4, method='vina')
+             protein_dir=f'{base_dir}data/', ligand_dir=f'{base_dir}data/', output_dir=f'{base_dir}data/',
+             pH=7.4, method='vina')
         # Check output was created
         assert os.path.isfile(f'{base_dir}data/UYO78372-dehp_log.txt') == True
 
-
     def test_docking_uniprot(self):
-        # def dock(sequence: str, protein_name, smiles: str, ligand_name: str, residues: list, protein_dir: str, ligand_dir: str,
-        # output_dir: str, pH: float, method: str, size_x=5.0, size_y=5.0, size_z=5.0, num_modes=9, exhaustivenes=32):
+        # def dock(sequence: str, protein_name, smiles: str, ligand_name: str, residues: list, protein_dir: str,
+        # ligand_dir: str, output_dir: str, pH: float, method: str, size_x=5.0, size_y=5.0, size_z=5.0, num_modes=9,
+        # exhaustivenes=32):
+
         smiles = 'CCCCC(CC)COC(=O)C1=CC=CC=C1C(=O)OCC(CC)CCCC'
         dock(sequence='', protein_name='A0A0H2V871', smiles=smiles, ligand_name='DEHP', residues=[113], 
                           protein_dir=f'{base_dir}data/', ligand_dir=f'{base_dir}data/', output_dir=f'{base_dir}data/', pH=7.4, method='vina')
         assert os.path.isfile(f'{base_dir}data/A0A0H2V871-DEHP_log.txt') == True
-
 
     def test_get_structure(self):
         """ test getting the structure for alpha fold. """
@@ -65,7 +64,8 @@ class TestBinder(unittest.TestCase):
         df['LigandName'] = 'DEHP'
 
         # df, output_dir, protein_dir, ligand_dir, output_file,
-        calculate_docking_affinities_across_dataset(df, base_dir, f'{base_dir}/data/tmp/', f'{base_dir}/data/tmp/',  'docking_scores.csv',
+        calculate_docking_affinities_across_dataset(df, base_dir, f'{base_dir}/data/tmp/',
+                                                    f'{base_dir}/data/tmp/',  'docking_scores.csv',
                                                     num_threads=1)
         
     def test_diffdock(self):
@@ -96,6 +96,7 @@ class TestBinder(unittest.TestCase):
     def test_chia(self):
         """ ToDo. """
         return True
-        
+
+
 if __name__ == '__main__':
     unittest.main()

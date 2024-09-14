@@ -21,35 +21,18 @@ A discusting mix of hacked together elements <3 true bioinformatics style, I am 
 apologise profusely.
 """
 from rdkit.Chem.MolStandardize.rdMolStandardize import Uncharger
-import re
-import csv
 from pdbfixer import PDBFixer
 from openmm.app import PDBFile, PDBxFile
-from tqdm import tqdm
 from Bio.PDB import PDBParser, MMCIFParser
 from Bio.PDB import PDBIO, Select, MMCIFIO
 from Bio import PDB
-from multiprocessing.dummy import Pool as ThreadPool
-import pandas as pd
 from rdkit.Chem import AllChem
 import requests
 
 import logging
-import os
 import subprocess
-from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
-from pathlib import Path
-from Bio import SeqIO
 import os
-import torch
-import pandas as pd
 from rdkit import Chem
-
-
-import argparse
-from chai_lab.chai1 import run_inference
-
 from rdkit.Chem import AllChem as Chem
 
 
@@ -66,13 +49,13 @@ def canonicalize_smiles(smiles_string):
 def smiles_to_sdf(smiles: str, output_sdf_path: str):
     # Convert SMILES string to RDKit molecule object
     mol = Chem.MolFromSmiles(smiles)
-    
+
     # Add hydrogens
     mol = Chem.AddHs(mol)
-    
+
     # Compute 3D coordinates
     AllChem.EmbedMolecule(mol)
-    
+
     # Write to SDF file
     writer = Chem.SDWriter(output_sdf_path)
     writer.write(mol)
@@ -114,11 +97,14 @@ def calculate_centroid(coords):
 
     return centroid
 
+
 """
 ------------------------------------------------------------------------------------
 This is from: https://github.com/luwei0917/DynamicBind Thanks <3
 ------------------------------------------------------------------------------------
 """
+
+
 def get_alphafold_structure(uniprot_accession, output_file):
     """ get an alphafold structure if it exists! """
     if not os.path.isfile(output_file):
@@ -163,10 +149,12 @@ def remove_hydrogen_pdb(pdbFile, toFile):
     io.set_structure(s)
     io.save(toFile, select=NoHydrogen())
 
+
 def save_clean_protein(s, toFile, keep_chain='A', keep_all_protein_chains=True):
     """
     First remove everything before adding everything back in.
     """
+
     class MySelect(Select):
         def accept_residue(self, residue, keep_chain=keep_chain):
             pdb, _, chain, (hetero, resid, insertion) = residue.full_id
@@ -229,12 +217,14 @@ def clean_one_pdb(proteinFile, toFile, keep_chain='keep_all'):
     else:
         raise 'protein is not pdb or cif'
 
+
 """
 ------------------------------------------------------------------------------------
 This is adapted from docstring: https://github.com/dockstring/dockstring/blob/main/dockstring/utils.py
 I had to edit it as I was getting issues. 
 ------------------------------------------------------------------------------------
 """
+
 
 def read_mol_from_pdb(pdb_file) -> Chem.Mol:
     """
@@ -250,8 +240,9 @@ def read_mol_from_pdb(pdb_file) -> Chem.Mol:
         mol = Chem.MolFromPDBFile(str(pdb_file))
     return mol
 
+
 def write_vina_affinities(protein_name, ligand_name, log_file_path, output_csv_path):
-        # Read the content of the log file
+    # Read the content of the log file
     with open(log_file_path, 'r') as file:
         log_content = file.readlines()
 
@@ -293,6 +284,7 @@ def protonate_smiles(smiles: str, pH: float) -> str:
         return None
 
     return output.strip()
+
 
 def format_ligand(smiles: str, name: str, ligand_dir: str, pH: float):
     """
@@ -353,7 +345,7 @@ def format_ligand(smiles: str, name: str, ligand_dir: str, pH: float):
     writer.write(mol)
 
     return ligand_pdbqt_file, ligand_sdf_file
-    
+
 
 def get_pdb_structure(pdb_id, file_path):
     """
@@ -364,7 +356,7 @@ def get_pdb_structure(pdb_id, file_path):
     """
     url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
     response = requests.get(url)
-    
+
     if response.status_code == 200:
         with open(file_path, 'w') as file:
             file.write(response.text)
@@ -372,20 +364,97 @@ def get_pdb_structure(pdb_id, file_path):
     else:
         print(f"Failed to retrieve PDB structure {pdb_id}")
 
+
 #     protein_pdbqt = format_pdb(sequence, protein_name, protein_dir, pH)
+
+def run_mmff94_opt(mol: Chem.Mol, max_iters: int) -> Chem.Mol:
+    """
+    Optimize molecular structure with MMFF94 force field.
+
+    :param mol: molecular structure to be optimized
+    :param max_iters: maximum number of structure optimization iterations
+    :return: optimized molecule
+    """
+    Chem.MMFFSanitizeMolecule(mol)
+    opt_result = Chem.MMFFOptimizeMolecule(mol, mmffVariant='MMFF94', maxIters=max_iters)
+    return opt_result
+
+
+def run_uff_opt(mol: Chem.Mol, max_iters: int) -> Chem.Mol:
+    """
+    Optimize molecular structure with UFF.
+
+    :param mol: molecular structure to be optimized
+    :param max_iters: maximum number of structure optimization iterations
+    :return: optimized molecule
+    """
+    opt_result = Chem.UFFOptimizeMolecule(mol, maxIters=max_iters)
+    return opt_result
+
+
+def refine_mol_with_ff(mol, max_iters=1000) -> Chem.Mol:
+    """
+    Optimize molecular structure. Try MMFF94 first, use UFF as a backup.
+
+    :param mol: molecular structure to be optimized
+    :param max_iters: maximum number of structure optimization iterations
+    :return: optimized molecule
+    """
+    if Chem.MMFFHasAllMoleculeParams(mol):
+        try:
+            opt_mol = run_mmff94_opt(mol, max_iters=max_iters)
+        except Chem.rdchem.KekulizeException as exception:
+            logging.info(f'Ligand optimization with MMFF94 failed: {exception}, trying UFF')
+            opt_mol = run_uff_opt(mol, max_iters=max_iters)
+    elif Chem.UFFHasAllMoleculeParams(mol):
+        opt_mol = run_uff_opt(mol, max_iters=max_iters)
+        return opt_mol
+    # Otherwise it was not able to be optimised...
+    return mol
+
+
+def pdb_to_pdbqt_protein(input_filename, output_filename=None, ph=7.4):
+    """
+    Convert a pdb file to a pdbqt file.
+    """
+    # Need to first remove stuff that is sometimes added by
+    lines = []
+    with open(input_filename, 'r+') as fin:
+        for line in fin:
+            if line.split(' ')[0] not in ['ENDBRANCH', 'BRANCH', 'ROOT', 'ENDROOT']:
+                lines.append(line)
+    with open(input_filename, 'w+') as fout:
+        for line in lines:
+            fout.write(line)
+
+    output_filename = output_filename if output_filename else input_filename.replace('.pdb', '.pdbqt')
+    os.system(f'obabel {input_filename} -xr -p {ph} --partialcharge gasteiger -O {output_filename}')
+    # Now we also want to be cheeky and remove any secondary model parts from the file
+    # This is a hacky way to keep a bound heme or something, seems to work fine.
+    lines = []
+    with open(output_filename, 'r+') as fin:
+        for line in fin:
+            if line.split(' ')[0] not in ['MODEL', 'TER', 'ENDMDL', 'REMARK']:
+                lines.append(line)
+    with open(output_filename, 'w+') as fout:
+        for line in lines:
+            if 'ENDMDL' not in line:
+                fout.write(line)
+        fout.write('TER\n')
+
 
 def format_pdb(sequence, name, protein_dir, pH):
     """ 
     Check if we have a structure, if we don't try get one from Alpha fold. If we can't get one from open Fold.
     Clean this guy for docking and other random shit.
-    """ 
+    """
     this_protein_dir = os.path.join(protein_dir, name)
     protein_pdbqt_file = os.path.join(this_protein_dir, name + '.pdbqt')
     protein_pdb_file = os.path.join(this_protein_dir, name + '.pdb')
 
     if os.path.isfile(protein_pdbqt_file):
         return protein_pdbqt_file
-    
+
     if not os.path.exists(this_protein_dir):
         os.system(f'mkdir {this_protein_dir}')
 
