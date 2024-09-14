@@ -53,14 +53,6 @@ from chai_lab.chai1 import run_inference
 from rdkit.Chem import AllChem as Chem
 
 
-def canonicalize_smiles(smiles_string):
-    molecule = Chem.MolFromSmiles(smiles_string)
-    if molecule:
-        canonical_smiles = Chem.MolToSmiles(molecule, canonical=True)
-        return canonical_smiles
-    else:
-        return None
-
 
 def calculate_docking_affinities_across_dataset(df, output_dir, protein_dir, ligand_dir, output_file, num_threads=20, 
                                                 size_x=10.0, size_y=10.0, size_z=10.0, pH=7.4, method='ad4'):

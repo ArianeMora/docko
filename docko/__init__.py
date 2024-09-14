@@ -23,12 +23,8 @@ __author__ = 'Ariane Mora'
 __author_email__ = 'ariane.n.mora@gmail.com'
 __license__ = 'GPL3'
 
-from levseq.globals import *
-from levseq.variantcaller import *
-from levseq.visualization import *
-from levseq.interface import *
-from levseq.cmd import *
-from levseq.utils import *
-from levseq.simulation import *
-from levseq.user import *
-
+from docko.helpers import *
+from docko.docko import *
+from docko.vina import *
+from docko.chai import *
+from docko.diffdock import *
