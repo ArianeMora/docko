@@ -1,16 +1,23 @@
 # Docko
-Docking for ligands made simple.
+Docking for ligands a discusting mix of code combining the latest from Chai with old scool bro vina.
+
+Made this for myself but others wanted to use. Love only pls. Take it as it is <3 
 
 ## Install
-Make sure you have vina installed. 
+Make sure you have vina installed: https://autodock-vina.readthedocs.io/en/latest/installation.html
 
 ```
 conda  create --name docko python=3.10
 conda activate docko
 conda install -c conda-forge pdbfixer
+conda install -c conda-forge numpy swig boost-cpp sphinx sphinx_rtd_theme
+pip install vina
+conda config --env --add channels conda-forge
+pip install git+https://github.com/chaidiscovery/chai-lab.git
+pip install chai_lab==0.0.1
 ```
 
-### Everything else is just pip
+g else is just pip
 ```
 pip install -r requirements.txt
 ```
@@ -44,3 +51,20 @@ ENDROOT
 ```
 
 Then you can run the program as per usual :D 
+
+### If you wish to use DiffDock (which I would not recomend)
+You'll need Trill and to run in the Trill environment:
+https://trill.readthedocs.io/en/latest/home.html
+
+```
+micromamba create -n TRILL python=3.10 ; micromamba activate TRILL
+micromamba install -c pytorch -c nvidia pytorch=2.1.2 pytorch-cuda=12.1 torchdata
+micromamba install -c conda-forge openbabel pdbfixer swig openmm smina fpocket vina openff-toolkit openmmforcefields setuptools=69.5.1
+micromamba install -c bioconda foldseek pyrsistent
+micromamba install -c "dglteam/label/cu121" dgl
+micromamba install -c pyg pyg pytorch-cluster pytorch-sparse pytorch-scatter
+pip install git+https://github.com/martinez-zacharya/lightdock.git@03a8bc4888c0ff8c98b7f0df4b3c671e3dbf3b1f git+https://github.com/martinez-zacharya/ECPICK.git setuptools==69.5.1
+pip install trill-proteins
+
+```
+### Everythin
