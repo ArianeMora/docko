@@ -166,6 +166,8 @@ def dock_ad4_pdbqt(ligand_pdbqt, protein_pdbqt, logfile, output_dir, protein_nam
     ../../software/x86_64Linux2/autodock4 -p UYO78372.dpf -l docking_results_UYO78372.dlg
 
     """
+    package_root = Path(__file__).resolve().parent.parent
+
     gpf = os.path.join(output_dir, f'{protein_name}_{ligand_name}.gpf')
     glg = os.path.join(output_dir, f'{protein_name}_{ligand_name}.glg')
     dpf = os.path.join(output_dir, f'{protein_name}_{ligand_name}.dpf')
@@ -179,70 +181,31 @@ def dock_ad4_pdbqt(ligand_pdbqt, protein_pdbqt, logfile, output_dir, protein_nam
 
     print(output_dir)
     # Step 1 prepare GPF
-    cmd_list = ['/disk1/ariane/vscode/enzymetk/software/x86_64Linux2/mgltools_x86_64Linux2_1.5.7/bin/pythonsh',
-                '/disk1/ariane/vscode/enzymetk/enzymetk/prepare_gpf.py',
+    cmd_list = [f'{package_root}/docko/deps/pythonsh',
+                f'{package_root}/docko/deps/prepare_gpf.py',
                 '-l', ligand_pdbqt,
                 '-r', protein_pdbqt,
                 '-o', gpf]
     print(' '.join(cmd_list))
     os.system(' '.join(cmd_list))
 
-    # cmd_return = subprocess.run(cmd_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    # output = cmd_return.stdout.decode('utf-8')
-    # logging.debug(output)
-
-    # # Write output to the logging file
-    # with open(logfile, 'w+') as fout:
-    #     fout.write(output)
-
     # --------- Step 2 prepare GLG
-    os.system(' '.join(['/disk1/ariane/vscode/enzymetk/software/x86_64Linux2/autogrid4', '-p', gpf, '-l', glg]))
-
-    # cmd_return = subprocess.run(cmd_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    # output = cmd_return.stdout.decode('utf-8')
-    # logging.debug(output)
-
-    # # Write output to the logging file
-    # with open(logfile, 'w+') as fout:
-    #     fout.write(output)
-
-    # # If failure, raise DockingError
-    # if cmd_return.returncode != 0:
-    #     print(f'Docking with ad4 failed GLG: {output}')
-
-    #     pythonsh ../../enzymetk/prepare_dpf4.py -l ligand.pdbqt -r UYO78372.pdbqt -o UYO78372.dpf
-    # ../../software/x86_64Linux2/autodock4 -p UYO78372.dpf -l docking_results_UYO78372.dlg
+    os.system(' '.join([f'{package_root}/docko/deps/autogrid4', '-p', gpf, '-l', glg]))
 
     # --------- Step 3 prepare DPF
-    cmd_list = ['/disk1/ariane/vscode/enzymetk/software/x86_64Linux2/mgltools_x86_64Linux2_1.5.7/bin/pythonsh',
-                '/disk1/ariane/vscode/enzymetk/enzymetk/prepare_dpf4.py',
+    cmd_list = [f'{package_root}/docko/deps/pythonsh',
+                f'{package_root}/docko/deps/prepare_dpf4.py',
                 '-l', ligand_pdbqt,
                 '-r', protein_pdbqt,
                 '-o', dpf]
     os.system(' '.join(cmd_list))
 
-    # cmd_return = subprocess.run(cmd_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    # output = cmd_return.stdout.decode('utf-8')
-    # logging.debug(output)
-
-    # # Write output to the logging file
-    # with open(logfile, 'w+') as fout:
-    #     fout.write(output)
-
     # --------- FINALLY RUN AD4
-    cmd_list = ['/disk1/ariane/vscode/enzymetk/software/x86_64Linux2/autodock4',
+    cmd_list = [f'{package_root}/docko/deps/autodock4',
                 '-p', dpf,
                 '-l', dlg]
 
     os.system(' '.join(cmd_list))
-
-    # cmd_return = subprocess.run(cmd_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    # output = cmd_return.stdout.decode('utf-8')
-    # logging.debug(output)
-
-    # # Write output to the logging file
-    # with open(logfile, 'w+') as fout:
-    #     fout.write(output)
 
     # They can get the results from here.
     return dlg

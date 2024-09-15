@@ -93,6 +93,18 @@ class TestBinder(unittest.TestCase):
                     pH=7.4, method='diffdock')
         print(score)
 
+    def test_ad4(self):
+        ## Testing for Autodock 4 with that forcefield, this only works on a linux computer
+        smiles = 'CCCCC(CC)COC(=O)C1=CC=CC=C1C(=O)OCC(CC)CCCC'
+        base_dir = '/disk1/ariane/vscode/docko/tests/'
+        dock(sequence='', protein_name='A0A0H2V871', smiles=smiles, ligand_name='DEHP', residues=[113], 
+                        protein_dir=f'{base_dir}/', ligand_dir=f'{base_dir}/', output_dir=f'{base_dir}/', pH=7.4, method='ad4')
+        os.path.isfile(f'{base_dir}A0A0H2V871-DEHP_log.txt')
+
+        with open(f'{base_dir}A0A0H2V871-DEHP_log.txt', 'r+') as fin:
+            for line in fin:
+                print(line)
+                    
     def test_chia(self):
         """ ToDo. """
         return True

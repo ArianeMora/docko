@@ -57,6 +57,16 @@ setup(name='docko',
       ],
       keywords=['docking', 'protein-engineering'],
       packages=['docko'],
+      include_package_data=True,
+      package_data={
+          'docko.deps': [
+              'prepare_gpf.py',
+              'pythonsh',
+              'prepare_dpf4.py',
+              'autodock4'
+              'autogrid4',
+          ],
+      },
       entry_points={
           'console_scripts': [
               'docko = docko.__main__:main'
@@ -65,11 +75,9 @@ setup(name='docko',
       install_requires=['Bio',
                         'biopython',
                         'jupyterlab',
-                        'mappy',
                         'matplotlib',
                         'numpy',
                         'pandas',
-                        'scipy',
                         'sciutil',
                         'seaborn',
                         'scikit-learn',
