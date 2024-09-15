@@ -28,6 +28,8 @@ from Bio.PDB import PDBIO, Select, MMCIFIO
 from Bio import PDB
 from rdkit.Chem import AllChem
 import requests
+from pathlib import Path
+
 
 import logging
 import subprocess
@@ -473,7 +475,7 @@ def format_pdb(sequence, name, protein_dir, pH):
         protein_pdb_file = os.path.join(this_protein_dir, name + '.pdb')
 
         if os.path.isfile(protein_pdbqt_file):
-            return protein_pdbqt_file
+            return name, protein_pdb_file, protein_pdbqt_file
 
         if not os.path.exists(this_protein_dir):
             os.system(f'mkdir {this_protein_dir}')

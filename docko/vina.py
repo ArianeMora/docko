@@ -181,8 +181,8 @@ def dock_ad4_pdbqt(ligand_pdbqt, protein_pdbqt, logfile, output_dir, protein_nam
 
     print(output_dir)
     # Step 1 prepare GPF
-    cmd_list = [f'{package_root}/docko/deps/pythonsh',
-                f'{package_root}/docko/deps/prepare_gpf.py',
+    cmd_list = [f'{package_root}/deps/x86_64Linux2/mgltools_x86_64Linux2_1.5.7/bin/pythonsh',
+                f'{package_root}/deps/prepare_gpf.py',
                 '-l', ligand_pdbqt,
                 '-r', protein_pdbqt,
                 '-o', gpf]
@@ -190,18 +190,18 @@ def dock_ad4_pdbqt(ligand_pdbqt, protein_pdbqt, logfile, output_dir, protein_nam
     os.system(' '.join(cmd_list))
 
     # --------- Step 2 prepare GLG
-    os.system(' '.join([f'{package_root}/docko/deps/autogrid4', '-p', gpf, '-l', glg]))
+    os.system(' '.join([f'{package_root}/deps/x86_64Linux2/autogrid4', '-p', gpf, '-l', glg]))
 
     # --------- Step 3 prepare DPF
-    cmd_list = [f'{package_root}/docko/deps/pythonsh',
-                f'{package_root}/docko/deps/prepare_dpf4.py',
+    cmd_list = [f'{package_root}/deps/x86_64Linux2/mgltools_x86_64Linux2_1.5.7/bin/pythonsh',
+                f'{package_root}/deps/prepare_dpf4.py',
                 '-l', ligand_pdbqt,
                 '-r', protein_pdbqt,
                 '-o', dpf]
     os.system(' '.join(cmd_list))
 
     # --------- FINALLY RUN AD4
-    cmd_list = [f'{package_root}/docko/deps/autodock4',
+    cmd_list = [f'{package_root}/deps/x86_64Linux2/autodock4',
                 '-p', dpf,
                 '-l', dlg]
 
