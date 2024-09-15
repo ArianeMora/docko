@@ -365,8 +365,6 @@ def get_pdb_structure(pdb_id, file_path):
         print(f"Failed to retrieve PDB structure {pdb_id}")
 
 
-#     protein_pdbqt = format_pdb(sequence, protein_name, protein_dir, pH)
-
 def run_mmff94_opt(mol: Chem.Mol, max_iters: int) -> Chem.Mol:
     """
     Optimize molecular structure with MMFF94 force field.
@@ -448,30 +446,52 @@ def format_pdb(sequence, name, protein_dir, pH):
     Check if we have a structure, if we don't try get one from Alpha fold. If we can't get one from open Fold.
     Clean this guy for docking and other random shit.
     """
-    this_protein_dir = os.path.join(protein_dir, name)
-    protein_pdbqt_file = os.path.join(this_protein_dir, name + '.pdbqt')
-    protein_pdb_file = os.path.join(this_protein_dir, name + '.pdb')
+    # First check if they passed a filename or the sequence name
+    if os.path.isfile(name):
+        # basically this means we have a pdb file
+        # Step 4: Clean em and return em!
+        protein_input_file = os.path.join(name)
+        name = name.split('/')[-1].replace('.cif', '').replace('.pdb', '')
 
-    if os.path.isfile(protein_pdbqt_file):
-        return protein_pdbqt_file
+        this_protein_dir = os.path.join(protein_dir, name)
 
-    if not os.path.exists(this_protein_dir):
-        os.system(f'mkdir {this_protein_dir}')
+        if not os.path.exists(this_protein_dir):
+            os.system(f'mkdir {this_protein_dir}')
 
-    # Step 1: try get PDB if PDB is a PDB id
-    get_pdb_structure(name, protein_pdb_file)
+        protein_pdb_file = os.path.join(this_protein_dir, name + '.pdb')
+        protein_pdbqt_file = os.path.join(this_protein_dir, name + '.pdbqt')
 
-    # Step 2: Try alpha fold structure (NOTE we expect name to be a uniprot ID this is the only way this will work.)
-    if not os.path.isfile(protein_pdb_file):
-        get_alphafold_structure(name, protein_pdb_file)
+        # Now run
+        clean_one_pdb(protein_input_file, protein_pdb_file)
 
-    # Step 3: Denovo make the structure using open fold
-    # if not os.path.isfile(protein_pdb_file): 
+        # Step 5: Convert to pdbqt for vina
+        pdb_to_pdbqt_protein(protein_pdb_file, protein_pdbqt_file, ph=pH)
+        return name, protein_pdb_file, protein_pdbqt_file
+    else:
+        this_protein_dir = os.path.join(protein_dir, name)
+        protein_pdbqt_file = os.path.join(this_protein_dir, name + '.pdbqt')
+        protein_pdb_file = os.path.join(this_protein_dir, name + '.pdb')
 
-    # Step 4: Clean em and return em!
-    clean_one_pdb(protein_pdb_file, protein_pdb_file)
+        if os.path.isfile(protein_pdbqt_file):
+            return protein_pdbqt_file
 
-    # Step 5: Convert to pdbqt for vina
-    pdb_to_pdbqt_protein(protein_pdb_file, protein_pdbqt_file, ph=pH)
+        if not os.path.exists(this_protein_dir):
+            os.system(f'mkdir {this_protein_dir}')
 
-    return protein_pdbqt_file
+        # Step 1: try get PDB if PDB is a PDB id
+        get_pdb_structure(name, protein_pdb_file)
+
+        # Step 2: Try alpha fold structure (NOTE we expect name to be a uniprot ID this is the only way this will work.)
+        if not os.path.isfile(protein_pdb_file):
+            get_alphafold_structure(name, protein_pdb_file)
+
+        # Step 3: Denovo make the structure using open fold
+        # if not os.path.isfile(protein_pdb_file): 
+
+        # Step 4: Clean em and return em!
+        clean_one_pdb(protein_pdb_file, protein_pdb_file)
+
+        # Step 5: Convert to pdbqt for vina
+        pdb_to_pdbqt_protein(protein_pdb_file, protein_pdbqt_file, ph=pH)
+
+        return name, protein_pdb_file, protein_pdbqt_file

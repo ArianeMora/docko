@@ -49,7 +49,7 @@ def dock(sequence: str, protein_name, smiles: str, ligand_name: str, residues: l
     """ Dock a smiles to a pdb file using vina and dockstring to automate some of the things. """
 
     # Step 1: Check if the protein exists, if not make it pretty and save it to the protein folder
-    protein_pdbqt = format_pdb(sequence, protein_name, protein_dir, pH)
+    protein_name, protein_pdb_file, protein_pdbqt = format_pdb(sequence, protein_name, protein_dir, pH)
 
     # Step 2: Check if the ligand exists, if not make it pretty and save it to the ligand folder
     ligand_pdbqt, ligand_sdf = format_ligand(smiles, ligand_name, ligand_dir, pH)
