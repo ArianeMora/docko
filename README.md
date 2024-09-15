@@ -164,3 +164,7 @@ things fail for you (whoever you are.)
 (1) Martinez, Z. A.; Murray, R. M.; Thomson, M. W. TRILL: Orchestrating Modular Deep-Learning Workflows for Democratized, Scalable Protein Analysis and Engineering. bioRxiv October 27, 2023, p 2023.10.24.563881. https://doi.org/10.1101/2023.10.24.563881.  
 (2) Eberhardt, J.; Santos-Martins, D.; Tillack, A. F.; Forli, S. AutoDock Vina 1.2.0: New Docking Methods, Expanded Force Field, and Python Bindings. J. Chem. Inf. Model. 2021, 61 (8), 3891–3898. https://doi.org/10.1021/acs.jcim.1c00203.  
 (3) Chai Discovery. https://www.chaidiscovery.com/blog/introducing-chai-1 (accessed 2024-09-15).
+
+
+### THANKX
+Lastly if you liked this, give it a star ****
