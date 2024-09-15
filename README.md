@@ -9,13 +9,19 @@ Make sure you have vina installed: https://autodock-vina.readthedocs.io/en/lates
 
 I have not found it to work with pip needs the executable.
 
+Works on mac and liunx, you need big power tho for Chai so would rec linux.
+
 ```
-conda  create --name docko python=3.10 -y
+conda  create --name docko python=3.10.14 -y
 conda activate docko
-pip install -r requirements.txt
 conda install -c conda-forge pdbfixer -y
 conda config --env --add channels conda-forge
 pip install git+https://github.com/chaidiscovery/chai-lab.git
+```
+
+### install docko now
+```
+pip install docko
 ```
 
 ## Quick start
