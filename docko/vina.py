@@ -25,7 +25,7 @@ import os
 import re
 from docko.helpers import *
 import pandas as pd
-from docko.docko import *
+from docko.vina import *
 from tqdm import tqdm
 
 
@@ -44,14 +44,35 @@ def run_vina_docking_thread(args):
             ligand_name = ligand_name.replace(' ', '_')
             try:
                 affinities = dock(seq, seq_id, smiles, ligand_name, active_site.split('|'), protein_dir, ligand_dir,
-                                  output_dir, pH,
-                                  size_x=size_x, size_y=size_y, size_z=size_z, method=method)
+                                    output_dir, pH,
+                                    size_x=size_x, size_y=size_y, size_z=size_z, method=method)
                 if method == 'vina':
                     write_vina_affinities(seq_id, ligand_name, affinities, os.path.join(output_dir, 'scores.txt'))
             except Exception as e:
                 print('-------------------------------------------------------------------------')
                 print(seq_id, ligand_name)
 
+
+
+def dock(sequence: str, protein_name, smiles: str, ligand_name: str, residues: list, protein_dir: str, ligand_dir: str,
+         output_dir: str, pH: float, method: str, size_x=5.0, size_y=5.0, size_z=5.0, num_modes=9, exhaustivenes=32):
+    """ Dock a smiles to a pdb file using vina and dockstring to automate some of the things. """
+
+    # Step 1: Check if the protein exists, if not make it pretty and save it to the protein folder
+    protein_name, protein_pdb_file, protein_pdbqt = format_pdb(sequence, protein_name, protein_dir, pH)
+
+    # Step 2: Check if the ligand exists, if not make it pretty and save it to the ligand folder
+    ligand_pdbqt, ligand_sdf = format_ligand(smiles, ligand_name, ligand_dir, pH)
+
+    # step 3: dock
+    if method == 'vina' or method == 'ad4':
+        affinities = dock_vina(ligand_pdbqt, protein_pdbqt, ligand_name, protein_name, output_dir, residues,
+                               size_x=size_x,
+                               size_y=size_y, size_z=size_z, num_modes=num_modes, exhaustivenes=exhaustivenes,
+                               method=method)
+    elif method == 'diffdock':
+        dock_diffdock(output_dir, ligand_sdf, protein_pdbqt.replace('.pdbqt', '.pdb'))
+    return None
 
 def make_config_for_vina(pdb_file, ligand_file, residues, output_file: str, size_x=5.0, size_y=5.0, size_z=5.0,
                          num_modes=9, exhaustivenes=32):
@@ -182,8 +203,8 @@ def dock_ad4_pdbqt(ligand_pdbqt, protein_pdbqt, logfile, output_dir, protein_nam
 
     print(output_dir)
     # Step 1 prepare GPF
-    cmd_list = [f'{package_root}/deps/x86_64Linux2/mgltools_x86_64Linux2_1.5.7/bin/pythonsh',
-                f'{package_root}/deps/prepare_gpf.py',
+    cmd_list = [f'{package_root}/docko/deps/x86_64Linux2/mgltools_x86_64Linux2_1.5.7/bin/pythonsh',
+                f'{package_root}/docko/deps/prepare_gpf.py',
                 '-l', ligand_pdbqt,
                 '-r', protein_pdbqt,
                 '-o', gpf]
@@ -191,18 +212,18 @@ def dock_ad4_pdbqt(ligand_pdbqt, protein_pdbqt, logfile, output_dir, protein_nam
     os.system(' '.join(cmd_list))
 
     # --------- Step 2 prepare GLG
-    os.system(' '.join([f'{package_root}/deps/x86_64Linux2/autogrid4', '-p', gpf, '-l', glg]))
+    os.system(' '.join([f'{package_root}/docko/deps/x86_64Linux2/autogrid4', '-p', gpf, '-l', glg]))
 
     # --------- Step 3 prepare DPF
-    cmd_list = [f'{package_root}/deps/x86_64Linux2/mgltools_x86_64Linux2_1.5.7/bin/pythonsh',
-                f'{package_root}/deps/prepare_dpf4.py',
+    cmd_list = [f'{package_root}/docko/deps/x86_64Linux2/mgltools_x86_64Linux2_1.5.7/bin/pythonsh',
+                f'{package_root}/docko/deps/prepare_dpf4.py',
                 '-l', ligand_pdbqt,
                 '-r', protein_pdbqt,
                 '-o', dpf]
     os.system(' '.join(cmd_list))
 
     # --------- FINALLY RUN AD4
-    cmd_list = [f'{package_root}/deps/x86_64Linux2/autodock4',
+    cmd_list = [f'{package_root}/docko/deps/x86_64Linux2/autodock4',
                 '-p', dpf,
                 '-l', dlg]
 

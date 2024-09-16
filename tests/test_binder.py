@@ -7,7 +7,7 @@ from docko.docko import *
 
 u = SciUtil()
 
-base_dir = ''
+base_dir = '/disk1/ariane/vscode/docko/tests/'
 
 class TestBinder(unittest.TestCase):
 
@@ -113,6 +113,7 @@ class TestBinder(unittest.TestCase):
                     
     def test_smiles(self):
         smiles = 'CCCCCCCCCCCC(=O)Oc1ccc([N+](=O)[O-])cc'
+        
         base_dir = '/disk1/ariane/vscode/docko/tests/'
         dock(sequence='', protein_name=f'{base_dir}data/test_existing.pdb', smiles=smiles, ligand_name='asljaklsd', residues=[113], 
                         protein_dir=f'{base_dir}/', ligand_dir=f'{base_dir}/', output_dir=f'{base_dir}/', pH=7.4, method='vina')

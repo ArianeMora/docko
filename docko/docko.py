@@ -27,7 +27,7 @@ from docko.diffdock import *
 
 
 def calculate_docking_affinities_across_dataset(df, output_dir, protein_dir, ligand_dir, output_file, num_threads=20,
-                                                size_x=10.0, size_y=10.0, size_z=10.0, pH=7.4, method='ad4'):
+                                                size_x=10.0, size_y=10.0, size_z=10.0, pH=7.4, method='vina'):
     pool = ThreadPool(num_threads)
     data = []
     with open(os.path.join(output_dir, output_file), 'w+') as fout:

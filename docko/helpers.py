@@ -38,11 +38,6 @@ from rdkit import Chem
 from rdkit.Chem import AllChem as Chem
 
 
-import org.openscience.cdk.smiles.SmilesGenerator;
-import org.openscience.cdk.smiles.SmilesParser;
-import org.openscience.cdk.nonotify.NoNotificationChemObjectBuilder;
-
-
 def canonicalize_smiles(smiles_string):
     molecule = Chem.MolFromSmiles(smiles_string)
     if molecule:
