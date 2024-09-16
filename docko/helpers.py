@@ -38,13 +38,16 @@ from rdkit import Chem
 from rdkit.Chem import AllChem as Chem
 
 
+import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.smiles.SmilesParser;
+import org.openscience.cdk.nonotify.NoNotificationChemObjectBuilder;
+
+
 def canonicalize_smiles(smiles_string):
     molecule = Chem.MolFromSmiles(smiles_string)
     if molecule:
         canonical_smiles = Chem.MolToSmiles(molecule, canonical=True)
         return canonical_smiles
-    else:
-        return None
 
 
 # Function to convert SMILES to SDF
@@ -300,7 +303,7 @@ def format_ligand(smiles: str, name: str, ligand_dir: str, pH: float):
 
     ligand_pdbqt_file = os.path.join(this_ligand_dir, name + '.pdbqt')
     ligand_sdf_file = os.path.join(this_ligand_dir, name + '.sdf')
-    ligand_mol_file = os.path.join(this_ligand_dir, name + '.mol')
+    ligand_mol_file = os.path.join(this_ligand_dir, name + '.pdb')
     if os.path.isfile(ligand_pdbqt_file):
         return ligand_pdbqt_file, ligand_sdf_file
 
@@ -327,24 +330,38 @@ def format_ligand(smiles: str, name: str, ligand_dir: str, pH: float):
     if mol.GetNumConformers() < 1:
         print('For conversion to MDL MOL format a conformer is required')
 
-    Chem.MolToMolFile(mol, filename=ligand_mol_file)
+    # Chem.MolToPDBFile(mol, filename=ligand_mol_file)
+    # # mk_prepare_ligand.py
+    # # yapf: disable
+    # cmd_list = [
+    #     'obabel',
+    #     '-imol', ligand_mol_file,
+    #     '-opdbqt',
+    #     '-O', ligand_pdbqt_file,
+    #     '--partialcharge', 'gasteiger'
+    # ]
+    # # yapf: enable
+    # cmd_return = subprocess.run(cmd_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    # output = cmd_return.stdout.decode('utf-8')
 
-    # yapf: disable
-    cmd_list = [
-        'obabel',
-        '-imol', ligand_mol_file,
-        '-opdbqt',
-        '-O', ligand_pdbqt_file,
-        '--partialcharge', 'gasteiger'
-    ]
-    # yapf: enable
-    cmd_return = subprocess.run(cmd_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    output = cmd_return.stdout.decode('utf-8')
-    logging.debug(output)
     # Also save the mol as a sdf 
     # Write to SDF file
     writer = Chem.SDWriter(ligand_sdf_file)
     writer.write(mol)
+    print('------- WARN YOU NEED VINA ENV if ya dont this next step will probs fail -----------')
+    print(f'conda run -n vina mk_prepare_ligand.py -i {ligand_sdf_file} -o {ligand_pdbqt_file}')
+    os.system(f'conda run -n vina mk_prepare_ligand.py -i {ligand_sdf_file} -o {ligand_pdbqt_file}')
+    # Clean the ligand one more time removing any extras
+    lines = []
+    with open(ligand_pdbqt_file, 'r+') as fin:
+        for line in fin:
+            #if line.split(' ')[0] not in ['ENDBRANCH', 'BRANCH', 'ROOT', 'ENDROOT', 'MODEL', 'ENDMDL', 'TORSDOF', 'REMARK', 'CONECT'] and 'ROOT' not in line:
+            lines.append(line.replace('UNL', 'LIG').replace('HETATM', 'ATOM')) # Replace any unknowns with GLC bit of a hack but yolo
+                # ToDo: fix this shit.
+
+    with open(ligand_pdbqt_file, 'w+') as fout:
+        for line in lines:
+            fout.write(line)
 
     return ligand_pdbqt_file, ligand_sdf_file
 
@@ -421,7 +438,7 @@ def pdb_to_pdbqt_protein(input_filename, output_filename=None, ph=7.4):
     lines = []
     with open(input_filename, 'r+') as fin:
         for line in fin:
-            if line.split(' ')[0] not in ['ENDBRANCH', 'BRANCH', 'ROOT', 'ENDROOT']:
+            if line.split(' ')[0] not in ['ENDBRANCH', 'BRANCH', 'ROOT', 'ENDROOT'] and 'Fe' not in line: # Add in the removal of the Iron bit
                 lines.append(line)
     with open(input_filename, 'w+') as fout:
         for line in lines:

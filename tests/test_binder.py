@@ -106,11 +106,19 @@ class TestBinder(unittest.TestCase):
         ## Testing for Autodock 4 with that forcefield, this only works on a linux computer
         smiles = 'CCCCC(CC)COC(=O)C1=CC=CC=C1C(=O)OCC(CC)CCCC'
         base_dir = '/disk1/ariane/vscode/docko/tests/'
-        dock(sequence='', protein_name=f'{base_dir}data/test_existing.pdb', smiles=smiles, ligand_name='example', residues=[113], 
+        dock(sequence='', protein_name=f'{base_dir}data/test_existing.pdb', smiles=smiles, ligand_name='n', residues=[113], 
                         protein_dir=f'{base_dir}/', ligand_dir=f'{base_dir}/', output_dir=f'{base_dir}/', pH=7.4, method='vina')
         os.path.isfile(f'{base_dir}test_existing-example_log.txt')
 
                     
+    def test_smiles(self):
+        smiles = 'CCCCCCCCCCCC(=O)Oc1ccc([N+](=O)[O-])cc'
+        base_dir = '/disk1/ariane/vscode/docko/tests/'
+        dock(sequence='', protein_name=f'{base_dir}data/test_existing.pdb', smiles=smiles, ligand_name='asljaklsd', residues=[113], 
+                        protein_dir=f'{base_dir}/', ligand_dir=f'{base_dir}/', output_dir=f'{base_dir}/', pH=7.4, method='vina')
+        os.path.isfile(f'{base_dir}test_existing-example_log.txt')
+
+
     def test_chia(self):
         """ ToDo. """
         return True

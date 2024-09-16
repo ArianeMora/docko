@@ -95,7 +95,8 @@ setup(name='docko',
                         'seaborn==0.13.2',
                         'statannot==0.2.3',
                         'statsmodels==0.14.2',
-                        'tqdm==4.66.5'],
-      python_requires='==3.10.14',
+                        'tqdm==4.66.5',
+                        'sciutil'],
+      python_requires='>=3.8',
       data_files=[("", ["LICENSE"])]
       )

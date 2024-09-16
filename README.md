@@ -18,11 +18,21 @@ conda install -c conda-forge pdbfixer -y
 conda config --env --add channels conda-forge
 pip install git+https://github.com/chaidiscovery/chai-lab.git
 ```
-
 ### install docko now
 ```
+conda activate docko
 pip install docko
 ```
+
+### Lucky last since vina is a b
+You need to make a second environment just to prepare the ligand, I came across this issue when making all my stuff.
+```
+conda create --name vina python=3.9.7 -y
+conda activate vina
+conda install -c conda-forge numpy openbabel scipy rdkit -y
+pip install meeko
+```
+
 
 ## Quick start
 

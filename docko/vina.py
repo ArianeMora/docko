@@ -59,7 +59,8 @@ def make_config_for_vina(pdb_file, ligand_file, residues, output_file: str, size
     coords = []
     for position in residues:
         chain_id, coordinates = get_coordinates_without_chain_id(pdb_file, int(position))
-        coords.append(coordinates)
+        if coordinates is not None:
+            coords.append(coordinates)
     print(coords)
     coords = calculate_centroid(coords)
     # Now we want to save this to a config file that has everything we need
