@@ -1,5 +1,7 @@
-
-
+# custom gitignore
+logs/*
+sandbox/*
+tests/fzl/*
 # ---------------- data ignores
 *data
 *software

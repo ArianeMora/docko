@@ -509,3 +509,26 @@ def format_pdb(sequence, name, protein_dir, pH):
         pdb_to_pdbqt_protein(protein_pdb_file, protein_pdbqt_file, ph=pH)
 
         return name, protein_pdb_file, protein_pdbqt_file
+
+
+def checkNgen_folder(folder_path: str) -> str:
+
+    """
+    Check if the folder and its subfolder exists
+    create a new directory if not
+
+    Args:
+    - folder_path: str, the folder path
+    """
+
+    # if input path is file
+    if bool(os.path.splitext(folder_path)[1]):
+        folder_path = os.path.dirname(folder_path)
+
+    split_list = os.path.normpath(folder_path).split("/")
+    for p, _ in enumerate(split_list):
+        subfolder_path = "/".join(split_list[: p + 1])
+        if not os.path.exists(subfolder_path):
+            print(f"Making {subfolder_path} ...")
+            os.mkdir(subfolder_path)
+    return folder_path

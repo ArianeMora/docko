@@ -15,26 +15,58 @@
 #                                                                             #
 ###############################################################################
 
+from __future__ import annotations
+
 from pathlib import Path
 import os
 import torch
+from ast import literal_eval
 import pandas as pd
 from chai_lab.chai1 import run_inference
 from docko.helpers import *
 
 
-def run_chai(label, seq, smiles, output_dir):
-    # Need to 
-    seq = seq.strip().replace('*', '').replace(' ', '').upper()
-    example_fasta = f">protein|{label}\n{seq}\n>ligand|{label}\n{smiles}\n"
-    if not os.path.isdir(f'{output_dir}{label}'):
-        os.system(f'mkdir {output_dir}{label}')
+def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles:list|str = "") -> None:
+    """
+    Run CHAI on a single protein-ligand pair.
+
+    Args:
+    - label (str): label for the protein-ligand pair
+    - seq (str): sequence of the protein
+    - smiles (str): SMILES string of the ligand
+    - output_dir (str): output directory
+    - cofactor_smiles (list or str): list of SMILES strings of cofactors, default is ""
+    """
+
+    # make sure output dir is dir
+    output_dir = os.path.normpath(output_dir) + "/"
+
+    # Need to clean up the sequence
+    seq = seq.strip().replace("*", "").replace(" ", "").upper()
+
+    example_fasta = f">protein|{label}\n{seq}\n>ligand|{label}-substrate\n{smiles}\n"
+
+    if cofactor_smiles != "":
+        # convert if cofactor_smiles to a list if it is a string
+        if isinstance(cofactor_smiles, str):
+            # use ast.literal_eval to convert string to list
+            try:
+                cofactor_smiles = literal_eval(cofactor_smiles)
+            except:
+                cofactor_smiles = [cofactor_smiles]
+
+        # add cofactor SMILES to the fasta
+        for cofactor_smile in cofactor_smiles:
+            example_fasta += f">ligand|{label}-cofactor\n{cofactor_smile}\n"
+
+    if not os.path.isdir(f"{output_dir}{label}"):
+        os.system(f"mkdir {output_dir}{label}")
         smiles = canonicalize_smiles(smiles)
         # CHeck this is OK
         if smiles:
             fasta_path = Path(f"{output_dir}{label}/{label}.fasta")
             fasta_path.write_text(example_fasta)
-            
+
             output_paths = run_inference(
                 fasta_file=fasta_path,
                 output_dir=Path(f"{output_dir}{label}/"),
@@ -47,9 +79,38 @@ def run_chai(label, seq, smiles, output_dir):
             )
 
 
-def run_chai_df(output_dir, filename, entry_column='Entry', seq_column='Sequence', ligand_column='Substrate'):
-    """ Run on a dataframe! """
+def run_chai_df(
+    output_dir: str,
+    filename: str,
+    entry_column: str ="Entry",
+    seq_column: str="Sequence",
+    ligand_column: str="Substrate",
+    cofactor_column: str="Cofactor",
+):
+    """
+    Run on a dataframe!
+
+    Args:
+    - output_dir (str): output directory
+    - filename (str): filename of the dataframe
+    - entry_column (str): column name for the entry
+    - seq_column (str): column name for the sequence
+    - ligand_column (str): column name for the ligand
+    - cofactor_column (str): column name for the cofactor that has A LIST of SMILES strings
+    """
+
     df = pd.read_csv(filename)
 
-    for label, seq, smiles in df[[entry_column, seq_column, ligand_column]].values:
-        run_chai(label, seq, smiles, output_dir)
+    if cofactor_column not in df.columns:
+        df[cofactor_column] = ""
+
+    for label, seq, smiles, cofactor_smiles in df[
+        [entry_column, seq_column, ligand_column, cofactor_column]
+    ].values:
+        run_chai(
+            label=label,
+            seq=seq,
+            smiles=smiles,
+            output_dir=checkNgen_folder(output_dir),
+            cofactor_smiles=cofactor_smiles,
+        )
