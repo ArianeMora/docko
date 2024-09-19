@@ -16,22 +16,22 @@ if __name__ == "__main__":
     f = open(os.path.join(log_folder, f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.out"), 'w')
     sys.stdout = f
 
-    run_chai_df(
-        "/disk2/fli/docko/tests/fzl/output-twocofactor",
-        "/disk2/fli/docko/tests/fzl/input/trpb_sub.csv",
-        entry_column="Entry",
-        seq_column="Sequence",
-        ligand_column="Substrate",
-        cofactor_column="Cofactor",
-    )
-
     # run_chai_df(
-    #     "/disk2/fli/docko/tests/fzl/output-nocofactor",
-    #     "/disk2/fli/docko/tests/data-fzl/trpb_sub.csv",
+    #     "tests/fzl/output-twocofactor",
+    #     "tests/fzl/input/trpb_sub.csv",
     #     entry_column="Entry",
     #     seq_column="Sequence",
     #     ligand_column="Substrate",
-    #     cofactor_column="",
+    #     cofactor_column="Cofactor",
     # )
+
+    run_chai_df(
+        "tests/fzl/output-combcofactor",
+        "tests/fzl/input/trpb_sub.csv",
+        entry_column="Entry",
+        seq_column="Sequence",
+        ligand_column="Substrate-cofactor",
+        cofactor_column="",
+    )
 
     f.close()

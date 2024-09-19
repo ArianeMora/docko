@@ -516,6 +516,7 @@ def checkNgen_folder(folder_path: str) -> str:
     """
     Check if the folder and its subfolder exists
     create a new directory if not
+
     Args:
     - folder_path: str, the folder path
     """

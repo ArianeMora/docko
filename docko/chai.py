@@ -26,7 +26,7 @@ from chai_lab.chai1 import run_inference
 from docko.helpers import *
 
 
-def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles:list = []) -> None:
+def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles:list|str = "") -> None:
     """
     Run CHAI on a single protein-ligand pair.
 
@@ -35,7 +35,7 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
     - seq (str): sequence of the protein
     - smiles (str): SMILES string of the ligand
     - output_dir (str): output directory
-    - cofactor_smiles (list): list of SMILES strings of cofactors, default is []
+    - cofactor_smiles (list or str): list of SMILES strings of cofactors, default is ""
     """
 
     # make sure output dir is dir
@@ -46,7 +46,7 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
 
     example_fasta = f">protein|{label}\n{seq}\n>ligand|{label}-substrate\n{smiles}\n"
 
-    if cofactor_smiles != []:
+    if cofactor_smiles != "":
         # convert if cofactor_smiles to a list if it is a string
         if isinstance(cofactor_smiles, str):
             # use ast.literal_eval to convert string to list
@@ -98,6 +98,7 @@ def run_chai_df(
     - ligand_column (str): column name for the ligand
     - cofactor_column (str): column name for the cofactor that has A LIST of SMILES strings
     """
+
     df = pd.read_csv(filename)
 
     if cofactor_column not in df.columns:
@@ -110,6 +111,6 @@ def run_chai_df(
             label=label,
             seq=seq,
             smiles=smiles,
-            output_dir=output_dir,
+            output_dir=checkNgen_folder(output_dir),
             cofactor_smiles=cofactor_smiles,
         )
