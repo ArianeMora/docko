@@ -26,7 +26,7 @@ from chai_lab.chai1 import run_inference
 from docko.helpers import *
 
 
-def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles:list|str = "") -> None:
+def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles:list|str = "", joinsubcofactor:bool=True) -> None:
     """
     Run CHAI on a single protein-ligand pair.
 
@@ -36,15 +36,16 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
     - smiles (str): SMILES string of the ligand
     - output_dir (str): output directory
     - cofactor_smiles (list or str): list of SMILES strings of cofactors, default is ""
+    - joinsubcofactor (bool): whether to join the substrate and cofactor in the same fasta file, default is True
     """
 
     # make sure output dir is dir
-    output_dir = os.path.normpath(output_dir) + "/"
+    output_subdir = os.path.join(output_dir, label)
 
     # Need to clean up the sequence
     seq = seq.strip().replace("*", "").replace(" ", "").upper()
 
-    example_fasta = f">protein|{label}\n{seq}\n>ligand|{label}-substrate\n{smiles}\n"
+    example_fasta = f">protein|{label}\n{seq}\n"
 
     if cofactor_smiles != "":
         # convert if cofactor_smiles to a list if it is a string
@@ -59,17 +60,21 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
         for cofactor_smile in cofactor_smiles:
             example_fasta += f">ligand|{label}-cofactor\n{cofactor_smile}\n"
 
-    if not os.path.isdir(f"{output_dir}{label}"):
-        os.system(f"mkdir {output_dir}{label}")
+    # now add substrate
+    example_fasta += f">ligand|{label}-substrate\n{smiles}\n"
+
+    if not os.path.exists(output_subdir):
+        os.system(f"mkdir {output_subdir}")
+        output_subdir = Path(checkNgen_folder(output_subdir))
         smiles = canonicalize_smiles(smiles)
         # CHeck this is OK
         if smiles:
-            fasta_path = Path(f"{output_dir}{label}/{label}.fasta")
+            fasta_path = Path(f"{output_subdir}/{label}.fasta")
             fasta_path.write_text(example_fasta)
 
             output_paths = run_inference(
                 fasta_file=fasta_path,
-                output_dir=Path(f"{output_dir}{label}/"),
+                output_dir=output_subdir,
                 # 'default' setup
                 num_trunk_recycles=3,
                 num_diffn_timesteps=200,
@@ -77,6 +82,8 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
                 device=torch.device("cuda:0"),
                 use_esm_embeddings=True,
             )
+    else:
+        print(f"Output directory exists: {output_subdir}")
 
 
 def run_chai_df(

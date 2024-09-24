@@ -1,0 +1,25 @@
+# conda env update --file vina.yml --prune
+
+name: vina
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9.7
+  - biopython
+  - ipykernel
+  - jupyter
+  - numpy
+  - openbabel
+  - pdbfixer
+  - pip
+  - pytorch
+  - scipy
+  - rdkit
+  - requests  # Add requests here
+  - tqdm
+  
+  - pip:
+    - meeko
