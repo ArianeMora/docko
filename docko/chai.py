@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import os
+from glob import glob
 import torch
 from ast import literal_eval
 import pandas as pd
@@ -84,6 +85,20 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
             )
     else:
         print(f"Output directory exists: {output_subdir}")
+
+    # get name of the output cif or pdb files
+    output_strcut_files = glob(f"{output_subdir}/*.cif") + glob(f"{output_subdir}/*.pdb")
+    
+    # rename the output files cif or pdb files
+    for output_strcut_file in output_strcut_files:
+        os.rename(output_strcut_file, output_strcut_file.replace("pred.model_idx", label))
+
+    # for npz files do the same
+    output_scores_files = glob(f"{output_subdir}/*.npz")
+
+    for output_scores_file in output_scores_files:
+        os.rename(output_scores_file, output_scores_file.replace("scores.model_idx", label))
+
 
 
 def run_chai_df(
