@@ -26,5 +26,5 @@ __license__ = 'GPL3'
 from docko.helpers import *
 from docko.docko import *
 from docko.vina import *
-from docko.chai import *
-from docko.diffdock import *
+# from docko.chai import *
+# from docko.diffdock import *

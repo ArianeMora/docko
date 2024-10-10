@@ -200,6 +200,7 @@ def clean_one_pdb(proteinFile, toFile, keep_chain='keep_all'):
     fixed_pdbFile = toFile
     # Remove then readd hydrogens
     remove_hydrogen_pdb(pdbFile, fixed_pdbFile)
+    print(fixed_pdbFile)
     fixer = PDBFixer(filename=fixed_pdbFile)
     fixer.removeHeterogens()
     fixer.findNonstandardResidues()
@@ -341,8 +342,18 @@ def format_ligand(smiles: str, name: str, ligand_dir: str, pH: float):
 
     # Also save the mol as a sdf 
     # Write to SDF file
-    writer = Chem.SDWriter(ligand_sdf_file)
-    writer.write(mol)
+    # Assuming 'mol' is the molecule you're working with
+    if mol is None:
+        print("The molecule is None. Check the input.")
+    elif mol.GetNumAtoms() == 0:
+        print("The molecule has no atoms. It might be invalid.")
+    else:
+        print(f"The molecule has {mol.GetNumAtoms()} atoms.")
+        writer = Chem.SDWriter(ligand_sdf_file)
+        writer.write(mol)
+        writer.close()
+
+
     print('------- WARN YOU NEED VINA ENV if ya dont this next step will probs fail -----------')
     print(f'conda run -n vina mk_prepare_ligand.py -i {ligand_sdf_file} -o {ligand_pdbqt_file}')
     os.system(f'conda run -n vina mk_prepare_ligand.py -i {ligand_sdf_file} -o {ligand_pdbqt_file}')

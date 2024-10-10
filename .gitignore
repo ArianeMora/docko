@@ -2,6 +2,9 @@
 logs/*
 sandbox/*
 tests/fzl/*
+tests/test_chai.py
+tests/test_chai_2.py
+
 # ---------------- data ignores
 *data
 *software

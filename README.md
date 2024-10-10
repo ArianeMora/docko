@@ -29,7 +29,7 @@ You need to make a second environment just to prepare the ligand, I came across 
 ```
 conda create --name vina python=3.9.7 -y
 conda activate vina
-conda install -c conda-forge numpy openbabel scipy rdkit -y
+conda install -c conda-forge numpy openbabel pdbfixer scipy rdkit -y
 pip install meeko
 ```
 
