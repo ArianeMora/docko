@@ -62,28 +62,28 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
             example_fasta += f">ligand|{label}-cofactor\n{cofactor_smile}\n"
 
     # now add substrate
-    example_fasta += f">ligand|{label}-substrate\n{smiles}\n"
+    if smiles:
+        smiles = canonicalize_smiles(smiles)
+        example_fasta += f">ligand|{label}-substrate\n{smiles}\n"
 
     if not os.path.exists(output_subdir):
         os.system(f"mkdir {output_subdir}")
         print(output_subdir)
         output_subdir = Path(output_subdir)
-        smiles = canonicalize_smiles(smiles)
         # CHeck this is OK
-        if smiles:
-            fasta_path = Path(f"{output_subdir}/{label}.fasta")
-            fasta_path.write_text(example_fasta)
+        fasta_path = Path(f"{output_subdir}/{label}.fasta")
+        fasta_path.write_text(example_fasta)
 
-            output_paths = run_inference(
-                fasta_file=fasta_path,
-                output_dir=output_subdir,
-                # 'default' setup
-                num_trunk_recycles=3,
-                num_diffn_timesteps=200,
-                seed=42,
-                device=torch.device("cuda:0"),
-                use_esm_embeddings=True,
-            )
+        output_paths = run_inference(
+            fasta_file=fasta_path,
+            output_dir=output_subdir,
+            # 'default' setup
+            num_trunk_recycles=3,
+            num_diffn_timesteps=200,
+            seed=42,
+            device=torch.device("cuda:0"),
+            use_esm_embeddings=True,
+        )
     else:
         print(f"Output directory exists: {output_subdir}")
 
