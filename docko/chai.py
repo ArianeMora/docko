@@ -67,7 +67,7 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
     if not os.path.exists(output_subdir):
         os.system(f"mkdir {output_subdir}")
         print(output_subdir)
-        #output_subdir = Path((output_subdir))
+        output_subdir = Path(output_subdir)
         smiles = canonicalize_smiles(smiles)
         # CHeck this is OK
         if smiles:
