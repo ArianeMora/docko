@@ -124,13 +124,14 @@ class TestBinder(unittest.TestCase):
 
 
     def test_chia(self):
-        run_chai('A0A0E3LLD2_METBA', # name
-         'MSIEKIPGYTYGKTESMSPLNLEDLKLLKDSVMFTEEDEKYLKKAGEVLEDQVEEILDTWYGFVGSHPHLLYYFTSPDGTPNEEYLAAVRKRFSKWILDTCNRNYDQAWLDYQYEIGLRHHRTKKNRTDNVESVPNINYRYLVAFIYPITATIKPFLARKGHTSEEVEKMHQAWFKATVLQVALWSYPYVKQGDF', # sequence
-         'CCCCC(CC)COC(=O)C1=CC=CC=C1C(=O)OCC(CC)CCCC', # ligand as smiles
-         base_dir
+        run_chai('LQA', # name
+         'MSIEKIPGYEVLEDQVEEILDTWYVESVPNINYRYLVAFIYPITATIKPFLARKGHTSEEVEKMHQAWFKATVLQVALWSYPYVKQGDF', # sequence
+         'CCCCC(CC)COC(=O)C(CC)CCCC', # ligand as smiles
+         base_dir,
+         cofactor_smiles='CC1=C2N([Fe]3([N]4=C(C=C5C(CCC([O-])=O)=C6C)C(CCC([O-])=O)=C(C)C4=C2)(N5C6=CC(C(C=C)=C7C)=[N]3C7=C8)=CC(OCC)=O)C8=C1C=C'
+         joinsubcofactor:bool=True
         )
-
-
+        
 
 if __name__ == '__main__':
     unittest.main()
