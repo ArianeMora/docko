@@ -73,14 +73,15 @@ About the same as chai
 import sys
 from docko.boltz import *
 
-base_dir = '/disk1/ariane/vscode/docko/'
+base_dir = '/XXXXXXX/XXXXXXX/vscode/docko/'
 run_boltz('boltzproteinexample', 
          'MSIEKIPGYTYGKTESMSPLNLEDLKLLKDSVMFTEEDEKYLKKAGEVLEDQVEEILDTWYGFVGSHPHLLYYFTSPDGTPNEEYLAAVRKRFSKWILDTCNRNYDQAWLDYQYEIGLRHHRTKKNRTDNVESVPNINYRYLVAFIYPITATIKPFLARKGHTSEEVEKMHQAWFKATVLQVALWSYPYVKQGDF', 
          'CCCCC(CC)COC(=O)C1=CC=CC=C1C(=O)OCC(CC)CCCC',
          base_dir
         )
-# now your results are in `/disk1/ariane/vscode/docko/boltzproteinexample`
+# now your results are in `/XXXXXXX/XXXXXXX/vscode/docko/boltzproteinexample`
 ```
+
 This will save the results including the confidence model and the `plldt.npz` file.
 
 #### Use case 2: you have a uniprot ID and you want to get the structure and bind a ligand with vina
@@ -202,7 +203,23 @@ things fail for you (whoever you are.)
 (1) Martinez, Z. A.; Murray, R. M.; Thomson, M. W. TRILL: Orchestrating Modular Deep-Learning Workflows for Democratized, Scalable Protein Analysis and Engineering. bioRxiv October 27, 2023, p 2023.10.24.563881. https://doi.org/10.1101/2023.10.24.563881.  
 (2) Eberhardt, J.; Santos-Martins, D.; Tillack, A. F.; Forli, S. AutoDock Vina 1.2.0: New Docking Methods, Expanded Force Field, and Python Bindings. J. Chem. Inf. Model. 2021, 61 (8), 3891–3898. https://doi.org/10.1021/acs.jcim.1c00203.  
 (3) Chai Discovery. https://www.chaidiscovery.com/blog/introducing-chai-1 (accessed 2024-09-15).
-
-
+(4) Boltz: 
+```
+@article{wohlwend2024boltz1,
+  author = {Wohlwend, Jeremy and Corso, Gabriele and Passaro, Saro and Reveiz, Mateo and Leidal, Ken and Swiderski, Wojtek and Portnoi, Tally and Chinn, Itamar and Silterra, Jacob and Jaakkola, Tommi and Barzilay, Regina},
+  title = {Boltz-1: Democratizing Biomolecular Interaction Modeling},
+  year = {2024},
+  doi = {10.1101/2024.11.19.624167},
+  journal = {bioRxiv}
+}
+```
+```
+@article{mirdita2022colabfold,
+  title={ColabFold: making protein folding accessible to all},
+  author={Mirdita, Milot and Sch{\"u}tze, Konstantin and Moriwaki, Yoshitaka and Heo, Lim and Ovchinnikov, Sergey and Steinegger, Martin},
+  journal={Nature methods},
+  year={2022},
+}
+```
 ### THANKX
 Lastly if you liked this, give it a star ****
