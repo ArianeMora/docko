@@ -18,11 +18,16 @@ conda install -c conda-forge pdbfixer -y
 conda config --env --add channels conda-forge
 pip install git+https://github.com/chaidiscovery/chai-lab.git
 ```
+
 ### install docko now
 ```
 conda activate docko
 pip install docko
 ```
+### Maybe if you're feeling wild install boltz
+```
+pip install boltz
+``` 
 
 ### Lucky last since vina is a b
 You need to make a second environment just to prepare the ligand, I came across this issue when making all my stuff.
@@ -60,6 +65,23 @@ run_chai_df(output_dir, filename, entry_column='Entry', seq_column='Sequence', l
 This runs Chai on a csv that contains your sequneces, ligands (Substartes) and the entry name (Entry) 
 and makes a new folder using the entry name (this would mean you ideally don't want dumb characters in there.) And puts 
 all these new folders in `output_dir`.
+
+#### Running on Boltz
+About the same as chai
+
+```
+import sys
+from docko.boltz import *
+
+base_dir = '/disk1/ariane/vscode/docko/'
+run_boltz('boltzproteinexample', 
+         'MSIEKIPGYTYGKTESMSPLNLEDLKLLKDSVMFTEEDEKYLKKAGEVLEDQVEEILDTWYGFVGSHPHLLYYFTSPDGTPNEEYLAAVRKRFSKWILDTCNRNYDQAWLDYQYEIGLRHHRTKKNRTDNVESVPNINYRYLVAFIYPITATIKPFLARKGHTSEEVEKMHQAWFKATVLQVALWSYPYVKQGDF', 
+         'CCCCC(CC)COC(=O)C1=CC=CC=C1C(=O)OCC(CC)CCCC',
+         base_dir
+        )
+# now your results are in `/disk1/ariane/vscode/docko/boltzproteinexample`
+```
+This will save the results including the confidence model and the `plldt.npz` file.
 
 #### Use case 2: you have a uniprot ID and you want to get the structure and bind a ligand with vina
 
