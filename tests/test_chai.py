@@ -8,7 +8,18 @@ from docko.chai import run_chai_df
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 # set all cudo devices to cuda:1
+class TestChai(unittest.TestCase):
 
+    def test_chai(self):
+        run_chai(
+            label="kms_ts_E11_F73M",
+            seq="",
+            smiles="",
+            output_dir="",
+            cofactor_smiles="",
+            joinsubcofactor=True,
+        )
+        
 if __name__ == "__main__":
 
     log_folder = checkNgen_folder("logs/chai/kms_lin_ts2")

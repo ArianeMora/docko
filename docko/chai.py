@@ -25,7 +25,7 @@ from ast import literal_eval
 import pandas as pd
 from chai_lab.chai1 import run_inference
 from docko.helpers import *
-
+import pickle
 
 def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles:list|str = "", joinsubcofactor:bool=True) -> None:
     """
@@ -73,8 +73,10 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
         # CHeck this is OK
         fasta_path = Path(f"{output_subdir}/{label}.fasta")
         fasta_path.write_text(example_fasta)
+        os.system(f"mkdir {output_subdir}/chai/")
+        output_subdir = Path(f"{output_subdir}/chai/")
 
-        output_paths = run_inference(
+        structure_cands = run_inference(
             fasta_file=fasta_path,
             output_dir=output_subdir,
             # 'default' setup
@@ -83,7 +85,11 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
             seed=42,
             device=torch.device("cuda:0"),
             use_esm_embeddings=True,
-        )
+        ) 
+        pae = zip(structure_cands.cif_paths, structure_cands.pae)
+        pickle.dump(pae, open(f"{output_subdir}/{label}.pkl", "wb"))
+        # Do some shit on this
+        # https://github.com/chaidiscovery/chai-lab/blob/main/chai_lab/chai1.py#L247
     else:
         print(f"Output directory exists: {output_subdir}")
 
