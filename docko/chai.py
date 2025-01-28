@@ -63,8 +63,11 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
 
     # now add substrate
     if smiles:
-        smiles = canonicalize_smiles(smiles)
-        example_fasta += f">ligand|{label}-substrate\n{smiles}\n"
+        smiles = smiles.split('.')
+        for i, smile in enumerate(smiles):
+            print(smile)
+            #smile = canonicalize_smiles(smile)
+            example_fasta += f">ligand|{label}-substrate-{i}\n{smile}\n"
 
     if not os.path.exists(output_subdir):
         os.system(f"mkdir {output_subdir}")
