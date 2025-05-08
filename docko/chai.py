@@ -86,7 +86,6 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
             num_trunk_recycles=3,
             num_diffn_timesteps=200,
             seed=42,
-            device=torch.device("cuda:0"),
             use_esm_embeddings=True,
         ) 
         pae = zip(structure_cands.cif_paths, structure_cands.pae)

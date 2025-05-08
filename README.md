@@ -11,10 +11,13 @@ I have not found it to work with pip needs the executable.
 
 Works on mac and liunx, you need big power tho for Chai so would rec linux.
 
+Note you need `openmm==8.0` (if you get some random modeller error this should fix it, it arrises from an incompatibility with openmm and pdbfixer gah)
+
 ```
-conda  create --name docko python=3.10.14 -y
+conda  create --name docko python=3.10 -y
 conda activate docko
 conda install -c conda-forge pdbfixer -y
+pip install openmm==8.0
 conda config --env --add channels conda-forge
 pip install git+https://github.com/chaidiscovery/chai-lab.git
 ```
@@ -35,6 +38,7 @@ You need to make a second environment just to prepare the ligand, I came across 
 conda create --name vina python=3.9.7 -y
 conda activate vina
 conda install -c conda-forge numpy openbabel pdbfixer scipy rdkit -y
+
 pip install meeko
 ```
 
