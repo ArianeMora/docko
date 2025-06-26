@@ -71,7 +71,7 @@ and makes a new folder using the entry name (this would mean you ideally don't w
 all these new folders in `output_dir`.
 
 #### Running on Boltz
-About the same as chai
+About the same as chai - several options if you don't want the affinity prediction run the below:
 
 ```
 import sys
@@ -87,6 +87,21 @@ run_boltz('boltzproteinexample',
 ```
 
 This will save the results including the confidence model and the `plldt.npz` file.
+
+For affinity prediction run:
+```
+import sys
+from docko.boltz import *
+
+base_dir = '/XXXXXXX/XXXXXXX/vscode/docko/'
+run_boltz_affinity('boltzproteinexample', 
+         'MSIEKIPGYTYGKTESMSPLNLEDLKLLKDSVMFTEEDEKYLKKAGEVLEDQVEEILDTWYGFVGSHPHLLYYFTSPDGTPNEEYLAAVRKRFSKWILDTCNRNYDQAWLDYQYEIGLRHHRTKKNRTDNVESVPNINYRYLVAFIYPITATIKPFLARKGHTSEEVEKMHQAWFKATVLQVALWSYPYVKQGDF', 
+         'CCCCC(CC)COC(=O)C1=CC=CC=C1C(=O)OCC(CC)CCCC',
+         base_dir, 
+         None # or a cofactor 
+        )
+# now your results are in `/XXXXXXX/XXXXXXX/vscode/docko/boltzproteinexample`
+```
 
 #### Use case 2: you have a uniprot ID and you want to get the structure and bind a ligand with vina
 
