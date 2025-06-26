@@ -28,36 +28,63 @@ def write_yaml(protein_sequence, ligand_b_smiles, ligand_c_smiles, output_path):
     # For boltz 2 it's better to run with the yaml so that we can specify the output format
     # ToDo: make this more generalizable to more than 2 strings and also so that we can have different interactions we care about!
     # Structure the dictionary
-    data = {
-        "version": 1,
-        "sequences": [
-            {
-                "protein": {
-                    "id": "A",
-                    "sequence": protein_sequence
+    if ligand_c_smiles:
+        data = {
+            "version": 1,
+            "sequences": [
+                {
+                    "protein": {
+                        "id": "A",
+                        "sequence": protein_sequence
+                    }
+                },
+                {
+                    "ligand": {
+                        "id": "B",
+                        "smiles": ligand_b_smiles
+                    }
+                },
+                {
+                    "ligand": {
+                        "id": "C",
+                        "smiles": ligand_c_smiles
+                    }
                 }
-            },
-            {
-                "ligand": {
-                    "id": "B",
-                    "smiles": ligand_b_smiles
+            ],
+            "properties": [
+                {
+                    "affinity": {
+                        "binder": "B"
+                    }
                 }
-            },
-            {
-                "ligand": {
-                    "id": "C",
-                    "smiles": ligand_c_smiles
+            ]
+        }
+    else:
+        data = {
+            "version": 1,
+            "sequences": [
+                {
+                    "protein": {
+                        "id": "A",
+                        "sequence": protein_sequence
+                    }
+                },
+                {
+                    "ligand": {
+                        "id": "B",
+                        "smiles": ligand_b_smiles
+                    }
                 }
-            }
-        ],
-        "properties": [
-            {
-                "affinity": {
-                    "binder": "B"
+            ],
+            "properties": [
+                {
+                    "affinity": {
+                        "binder": "B"
+                    }
                 }
-            }
-        ]
-    }
+            ]
+        }
+
 
     # Write with single quotes around SMILES strings
     class SingleQuoted(str): pass
@@ -67,7 +94,8 @@ def write_yaml(protein_sequence, ligand_b_smiles, ligand_c_smiles, output_path):
 
     # Mark SMILES strings to be quoted
     data["sequences"][1]["ligand"]["smiles"] = SingleQuoted(ligand_b_smiles)
-    data["sequences"][2]["ligand"]["smiles"] = SingleQuoted(ligand_c_smiles)
+    if ligand_c_smiles:
+        data["sequences"][2]["ligand"]["smiles"] = SingleQuoted(ligand_c_smiles)
 
     with open(output_path, "w") as f:
         yaml.dump(data, f, default_flow_style=False, sort_keys=False)
@@ -81,7 +109,8 @@ def run_boltz_affinity(label: str, seq: str, smiles: str, output_dir: str, cofac
 
     # ToDo: add a warning here if they can't be run
     smiles = canonicalize_smiles(smiles)
-    cofactor_smiles = canonicalize_smiles(cofactor_smiles)
+    if cofactor_smiles:
+        cofactor_smiles = canonicalize_smiles(cofactor_smiles)
     
     # Make the directory and then save the yaml before running
     if not os.path.exists(output_subdir):
