@@ -120,7 +120,7 @@ def run_boltz_affinity(label: str, seq: str, smiles: str, output_dir: str, cofac
         # CHeck this is OK
         yml_path = Path(f"{output_subdir}/{label}.yaml")
         write_yaml(seq, smiles, cofactor_smiles, yml_path)
-        os.system(f'boltz predict {yml_path} --use_msa_server --accelerator gpu --out_dir {output_subdir} ')
+        os.system(f'boltz predict {yml_path} --use_msa_server --accelerator gpu --diffusion_samples 4 --out_dir {output_subdir} ')
     else:
         print(f"Output directory exists: {output_subdir}")
 
