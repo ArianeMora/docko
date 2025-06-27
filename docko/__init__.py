@@ -18,7 +18,7 @@
 __title__ = 'docko'
 __description__ = 'Wrappers around docking to make things smooth'
 __url__ = 'https://github.com/arianemora/docko/'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 __author__ = 'Ariane Mora'
 __author_email__ = 'ariane.n.mora@gmail.com'
 __license__ = 'GPL3'
