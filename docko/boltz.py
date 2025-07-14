@@ -24,15 +24,14 @@ import pandas as pd
 from docko.helpers import *
 import yaml
 
-def write_yaml(protein_sequence, ligand_b_smiles, ligand_c_smiles, output_path):
+def write_yaml(protein_sequence, ligand_main_smiles, ligand_other_smiles, output_path) -> None:
     # For boltz 2 it's better to run with the yaml so that we can specify the output format
     # ToDo: make this more generalizable to more than 2 strings and also so that we can have different interactions we care about!
     # Structure the dictionary
-    if ligand_c_smiles:
-        data = {
-            "version": 1,
-            "sequences": [
-                {
+    print(protein_sequence, ligand_main_smiles, ligand_other_smiles, output_path)
+    if ligand_other_smiles is not None:
+        print(ligand_other_smiles)
+        sequences = [{
                     "protein": {
                         "id": "A",
                         "sequence": protein_sequence
@@ -41,16 +40,19 @@ def write_yaml(protein_sequence, ligand_b_smiles, ligand_c_smiles, output_path):
                 {
                     "ligand": {
                         "id": "B",
-                        "smiles": ligand_b_smiles
+                        "smiles": ligand_main_smiles
                     }
-                },
-                {
-                    "ligand": {
-                        "id": "C",
-                        "smiles": ligand_c_smiles
-                    }
+                },]
+        for i, ligand_smiles in enumerate(ligand_other_smiles):
+            sequences.append({
+                "ligand": {
+                    "id": str(chr(ord('C') + i)),
+                    "smiles": ligand_smiles
                 }
-            ],
+            })
+        data = {
+            "version": 1,
+            "sequences": sequences,
             "properties": [
                 {
                     "affinity": {
@@ -72,7 +74,7 @@ def write_yaml(protein_sequence, ligand_b_smiles, ligand_c_smiles, output_path):
                 {
                     "ligand": {
                         "id": "B",
-                        "smiles": ligand_b_smiles
+                        "smiles": ligand_main_smiles
                     }
                 }
             ],
@@ -93,9 +95,11 @@ def write_yaml(protein_sequence, ligand_b_smiles, ligand_c_smiles, output_path):
     yaml.add_representer(SingleQuoted, single_quoted_presenter)
 
     # Mark SMILES strings to be quoted
-    data["sequences"][1]["ligand"]["smiles"] = SingleQuoted(ligand_b_smiles)
-    if ligand_c_smiles:
-        data["sequences"][2]["ligand"]["smiles"] = SingleQuoted(ligand_c_smiles)
+    data["sequences"][1]["ligand"]["smiles"] = SingleQuoted(ligand_main_smiles)
+    
+    if ligand_other_smiles is not None:
+        for i, ligand_smiles in enumerate(ligand_other_smiles):
+            data["sequences"][2 + i]["ligand"]["smiles"] = SingleQuoted(ligand_smiles)
 
     with open(output_path, "w") as f:
         yaml.dump(data, f, default_flow_style=False, sort_keys=False)
@@ -109,8 +113,11 @@ def run_boltz_affinity(label: str, seq: str, smiles: str, output_dir: str, cofac
 
     # ToDo: add a warning here if they can't be run
     smiles = canonicalize_smiles(smiles)
+    clean_cofactor_smiles = None
     if cofactor_smiles:
-        cofactor_smiles = canonicalize_smiles(cofactor_smiles)
+        clean_cofactor_smiles = []
+        for c in cofactor_smiles.split('.'):
+            clean_cofactor_smiles.append(canonicalize_smiles(cofactor_smiles))
     
     # Make the directory and then save the yaml before running
     if not os.path.exists(output_subdir):
@@ -119,7 +126,7 @@ def run_boltz_affinity(label: str, seq: str, smiles: str, output_dir: str, cofac
         output_subdir = Path(output_subdir)
         # CHeck this is OK
         yml_path = Path(f"{output_subdir}/{label}.yaml")
-        write_yaml(seq, smiles, cofactor_smiles, yml_path)
+        write_yaml(seq, smiles, clean_cofactor_smiles, yml_path)
         os.system(f'boltz predict {yml_path} --use_msa_server --accelerator gpu --diffusion_samples 4 --out_dir {output_subdir} ')
     else:
         print(f"Output directory exists: {output_subdir}")
