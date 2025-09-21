@@ -58,8 +58,8 @@ def run_chai(label: str, seq: str, smiles: str, output_dir: str, cofactor_smiles
                 cofactor_smiles = [cofactor_smiles]
 
         # add cofactor SMILES to the fasta
-        for cofactor_smile in cofactor_smiles:
-            example_fasta += f">ligand|{label}-cofactor\n{cofactor_smile}\n"
+        for c_i, cofactor_smile in enumerate(cofactor_smiles):
+            example_fasta += f">ligand|{label}-{c_i}-cofactor\n{cofactor_smile}\n"
 
     # now add substrate
     if smiles:

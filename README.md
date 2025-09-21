@@ -17,9 +17,8 @@ Note you need `openmm==8.0` (if you get some random modeller error this should f
 conda  create --name docko python=3.10 -y
 conda activate docko
 conda install -c conda-forge pdbfixer -y
-pip install openmm==8.0
 conda config --env --add channels conda-forge
-pip install git+https://github.com/chaidiscovery/chai-lab.git
+pip install chai_lab
 ```
 
 ### install docko now
@@ -27,10 +26,6 @@ pip install git+https://github.com/chaidiscovery/chai-lab.git
 conda activate docko
 pip install docko
 ```
-### Maybe if you're feeling wild install boltz
-```
-pip install boltz
-``` 
 
 ### Lucky last since vina is a b
 You need to make a second environment just to prepare the ligand, I came across this issue when making all my stuff.
@@ -38,8 +33,11 @@ You need to make a second environment just to prepare the ligand, I came across 
 conda create --name vina python=3.9.7 -y
 conda activate vina
 conda install -c conda-forge numpy openbabel pdbfixer scipy rdkit -y
-
-pip install meeko
+pip install openmm==8.0 meeko
+pip install vina
+pip install rdkit
+pip install scipy
+pip install meeko==0.6.1
 ```
 
 
